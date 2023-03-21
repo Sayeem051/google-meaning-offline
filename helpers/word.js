@@ -3,10 +3,8 @@ const { Word } = require('../model/word')
 module.exports = {
     createWord: async (body) => {
         try {
-            console.log(body)
             let created = await Word(body).save()
             return created
-            console.log(created)
         } catch (error) {
             console.log(JSON.stringify(error))
             return null

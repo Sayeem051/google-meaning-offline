@@ -29,7 +29,6 @@ const browse = require('./oxfordLanguagesLite');
     }
 
     wordList.sort((a, b) => parseInt(a.group.trim().split(' ')[1]) - parseInt(b.group.trim().split(' ')[1]))
-    console.log({ true: Array.from(new Set(wordList.map(word => word.value))).length })
 
     let words = []
     for (let i = 0; i < wordList.length; i++) {

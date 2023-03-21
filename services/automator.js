@@ -49,44 +49,41 @@ const browse = require('./oxfordLanguagesLite');
         })
         words = []
     }
-    // console.log(wor)
+
     let meaningObjects = []
     let logs = [];
     let newWb = xlsx.utils.book_new()
     let newWs = null
     let i = 0
     let result = null
-    let word = 'cumbersome'
-    // for (let groupIt = 0; groupIt < groups.length; groupIt++) {
-    // for (let word of groups[groupIt].words) {
-    result = await getWord({ word })
-    if (!result) {
-        result = await browse(word)
+    for (let groupIt = 0; groupIt < groups.length; groupIt++) {
+        for (let word of groups[groupIt].words) {
+            result = await getWord({ word })
+            if (!result) {
+                result = await browse(word)
+            }
+            if (!Object.keys(result).includes('message')) {
+                let created = result.createdAt ? true : await createWord({ group: 'Group 22', ...result })
+                if (created) { console.log(created) }
+            } else {
+                logs.push(result)
+            }
+            meaningObjects.push(result)
+            console.log(`${i}/960 words have been saved to db`)
+            let now = new Date()
+            for (; 1;) {
+                if (now <= new Date(new Date().getTime() - (1000 * 20))) {
+                    break
+                }
+            }
+        }
+        meaningObjects = meaningObjects.filter(meaningObject => !!meaningObject)
+        newWs = xlsx.utils.json_to_sheet(meaningObjects.map(({ word, meanings, synonyms }) => ({ word, meanings: meanings.join('\n'), synonyms: synonyms.join(', ') })))
+        xlsx.utils.book_append_sheet(newWb, newWs, `${groups[groupIt].group}`)
+        meaningObjects = []
+        console.log(`${groups[groupIt].group} Complete (hopefully)`)
     }
-    console.log(result)
-    if (!Object.keys(result).includes('message')) {
-        let created = result.createdAt ? true : await createWord({ group: 'Group 22', ...result })
-        if (created) { console.log(created) }
-    } else {
-        // logs.push(result)
-    }
-    // meaningObjects.push(result)
-    // console.log(`${i}/960 words have been saved to db`)
-    // let now = new Date()
-    // for (; 1;) {
-    //     if (now <= new Date(new Date().getTime() - (1000 * 20))) {
-    //         break
-    //     }
-    // }
-    // }
-    // meaningObjects = meaningObjects.filter(meaningObject => !!meaningObject)
-    // newWs = xlsx.utils.json_to_sheet(meaningObjects.map(({ word, meanings, synonyms }) => ({ word, meanings: meanings.join('\n'), synonyms: synonyms.join(', ') })))
-    // xlsx.utils.book_append_sheet(newWb, newWs, `${groups[groupIt].group}`)
-    // meaningObjects = []
-    // lastSavedWordIndex = 0
-    // console.log(`${groups[groupIt].group} Complete (hopefully)`)
-    // }
-    // console.log(JSON.stringify(logs))
-    // console.log(`All done${logs.length ? ', with few exceptions' : '!'}`)
-    // xlsx.writeFile(newWb, 'Gregmat-words-with-meanings.xlsx')
+    console.log(JSON.stringify(logs))
+    console.log(`All done${logs.length ? ', with few exceptions' : '!'}`)
+    xlsx.writeFile(newWb, 'Gregmat-words-with-meanings.xlsx')
 })();

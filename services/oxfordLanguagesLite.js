@@ -8,11 +8,6 @@ let browse = async (word) => {
         const page = await browser.newPage()
         await page.goto(`https://www.google.com/search?q=${word}+meaning`, { waitUntil: 'networkidle2' });
 
-        // let content = await page.evaluate(() => document.body.innerHTML)
-        // let data = $('div[class="LTKOO sY7ric"]', content).find('span').text()
-        // console.log(data)
-        // return
-
         let meanings = []
         let POSs = []
         let synonyms = []

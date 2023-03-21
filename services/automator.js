@@ -64,18 +64,18 @@ const browse = require('./oxfordLanguagesLite');
             }
             if (!Object.keys(result).includes('message')) {
                 let created = result.createdAt ? true : await createWord({ group: 'Group 22', ...result })
-                if (created) { console.log(created) }
+                if (created) { i++ }
             } else {
                 logs.push(result)
             }
             meaningObjects.push(result)
             console.log(`${i}/960 words have been saved to db`)
             let now = new Date()
-            for (; 1;) {
-                if (now <= new Date(new Date().getTime() - (1000 * 20))) {
-                    break
-                }
-            }
+            // for (; 1;) {
+            //     if (now <= new Date(new Date().getTime() - (1000 * 20))) {
+            //         break
+            //     }
+            // }
         }
         meaningObjects = meaningObjects.filter(meaningObject => !!meaningObject)
         newWs = xlsx.utils.json_to_sheet(meaningObjects.map(({ word, meanings, synonyms }) => ({ word, meanings: meanings.join('\n'), synonyms: synonyms.join(', ') })))
